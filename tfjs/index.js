@@ -1,28 +1,28 @@
 const resultElement = document.getElementById('result');
-const cat = document.getElementById('cat');
+const testImage = document.getElementById('testImage');
 
 const resultImage = document.getElementById('result01');
 
 let dogFileNames;
 let dogFilterNames;
 
-fetch('./tfjs_model/dog/dog_files.txt')
+fetch('./tfjs_model/dogs/dog_labels.txt')
   .then(response => response.text())
   .then(text => dogFileNames = text.split('\n'))
 
-fetch('./tfjs_model/dog/dog_filter_names.txt')
+fetch('./tfjs_model/dogs/dog_filters.txt')
   .then(response => response.text())
   .then(text => dogFilterNames = text.split('\n'))
 
-cat.onload = async () => {
+testImage.onload = async () => {
     resultElement.innerText = 'Loading MePet...';
     console.time('Loading of model');
-    const model = await tf.loadGraphModel("./tfjs_model/dog/model.json");
+    const model = await tf.loadGraphModel("./tfjs_model/dogs/model.json");
     console.timeEnd('Loading of model');
 
     resultElement.innerText = 'Predicting ...';
 
-    let imgs = tf.image.resizeBilinear(tf.browser.fromPixels(cat).expandDims(0), [224, 224]);
+    let imgs = tf.image.resizeBilinear(tf.browser.fromPixels(testImage).expandDims(0), [224, 224]);
     imgs = imgs.mean(3);
     imgs = tf.stack([imgs, imgs, imgs], 3);
     imgs = tf.sub(tf.div(tf.cast(imgs, 'float32'), 127.5), 1);
@@ -39,7 +39,7 @@ cat.onload = async () => {
     console.timeEnd('First prediction');
 
     let i;
-    let max_img = 50;
+    let max_img = 5;
     let img_show = 0;
     for(i=0; i<500; i++) {
         if(dogFilterNames.includes(dogFileNames[result_idx[i]])) {
