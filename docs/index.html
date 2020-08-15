@@ -4,14 +4,78 @@
     <meta charset="UTF-8">
      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
      <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@2.0.0/dist/tf.min.js"></script>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-154754490-2"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-154754490-2');
+    </script>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <link rel="stylesheet" href="./index.css">
     <title>MePet Test</title>
 </head>
+
 <body>
-    <img id="imagePreview" style="height:300px;">
-    <input id="imageUpload" type="file">
+<div id="fb-root"></div>
+<script async defer crossorigin="anonymous" src="https://connect.facebook.net/ko_KR/sdk.js#xfbml=1&version=v8.0&appId=1009968859461345&autoLogAppEvents=1" nonce="jBA6PV3W"></script>
+    <p class="h1 text-center p-3">닮은꼴 강아지 찾기</p>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-auto">
+                <div class="row">
+                    <img class="rounded" id="imagePreview" style="width:200px;">
+                </div>
+                <div class="row mt-1">
+                    <img class="rounded" id="resultImage" style="width:200px;"/>
+                </div>
+            </div>
+            <div class="col-md-auto ml-3">
+                <div class="row">
+                      <p class="h2" id="resultLabel"></p>
+                  </div>
+                  <div class="row">
+                      <p class="h5 text-left" id="resultProb"></p>
+                  </div>
+                  <div class="row">
+                      <p class="h6 text-left" id="resultProbMsg"></p>
+                  </div>
+            </div>
+        </div>
 
-    <div id="result"></div>
+        <div class="row justify-content-center p-5">
+            <input type="file" id="imageUpload" style="display: none;" />
+            <input class="btn btn-dark btn-lg" type="button" value="사진 업로드" onclick="document.getElementById('imageUpload').click();" />
+        </div>
 
+        <div class="row justify-content-center">
+            <!— SNS버튼 시작 —>
+            <div style="width: 100%; text-align: center; margin-bottom: 64px;"> <!— 페이스북 공유 버튼 —> <a href="" onclick="window.open(url_combine_fb, '', 'scrollbars=no, width=600, height=600'); return false;"><img src="https://storage.googleapis.com/storage.chris-chris.ai/images/facebook.gif" title="페이스북으로 공유하기" class="sharebtn_custom" style="width: 32px;"></a> <!— 트위터 공유 버튼 —> <a href="" onclick="window.open(url_combine_tw, '', 'scrollbars=no, width=600, height=600'); return false;"><img src="https://storage.googleapis.com/storage.chris-chris.ai/images/twitter.gif" title="트위터로 공유하기" class="sharebtn_custom" style="width: 32px;"></a> <!— 카카오 스토리 공유 버튼 —> <a href="" onclick="window.open(url_combine_ks, '', 'scrollbars=no, width=600, height=600'); return false;"><img src="https://storage.googleapis.com/storage.chris-chris.ai/images/story.gif" title="카카오스토리로 공유하기" class="sharebtn_custom" style="width: 32px;"></a> <!— 네이버 공유 버튼 —> <a href="" onclick="window.open(url_combine_naver, '', 'scrollbars=no, width=600, height=600'); return false;"><img src="https://storage.googleapis.com/storage.chris-chris.ai/images/naver.gif" title="네이버로 공유하기" class="sharebtn_custom" style="width: 32px;"></a> <!— 밴드 공유 버튼 —> <a href="" onclick="window.open(url_combine_band, '', 'scrollbars=no, width=584, height=635'); return false;"><img src="https://storage.googleapis.com/storage.chris-chris.ai/images/band.gif" title="밴드로 공유하기" class="sharebtn_custom" style="width: 32px;"></a> </div> <!— SNS버튼 끝 —>
+        </div>
+        <div class="row justify-content-center">
+            <div class="fb-comments" data-href="https://jeikeilim.github.io/me_pet/" data-numposts="5" data-width=""></div>
+        </div>
+    </div>
     <script src="index.js"></script>
+    <script type="text/javascript" async>
+      var url_default_ks = "https://story.kakao.com/share?url=";
+      var url_default_fb = "https://www.facebook.com/sharer/sharer.php?u=";
+      var url_default_tw_txt = "https://twitter.com/intent/tweet?text=";
+      var url_default_tw_url = "&url=";
+      var url_default_band = "http://band.us/plugin/share?body=";
+      var url_route_band = "&route=";
+      var url_default_naver = "http://share.naver.com/web/shareView.nhn?url=";
+      var title_default_naver = "&title=";
+      var url_this_page = location.href;
+      var title_this_page = document.title;
+      var url_combine_ks = url_default_ks + url_this_page;
+      var url_combine_fb = url_default_fb + url_this_page;
+      var url_combine_tw = url_default_tw_txt + document.title + url_default_tw_url + url_this_page;
+      var url_combine_band = url_default_band + encodeURI(url_this_page)+ '%0A' + encodeURI(title_this_page)+'%0A' + '&route=tistory.com';
+      var url_combine_naver = url_default_naver + encodeURI(url_this_page) + title_default_naver + encodeURI(title_this_page);
+    </script>
 </body>
 </html>

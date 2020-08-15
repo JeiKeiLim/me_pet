@@ -1,9 +1,13 @@
-const resultImage = document.getElementById('result');
+const resultImage = document.getElementById('resultImage');
+const resultLabel = document.getElementById('resultLabel');
+const resultProb = document.getElementById('resultProb');
+const resultProbMsg = document.getElementById('resultProbMsg');
 
 let dogFileNames, dogFilterNames, uniqueDogNames, uniqueDogNamesKorean;
 let nameConverter = {};
-let URL = "./tfjs_model/dogs/"
-let model
+let URL = "./tfjs_model/dogs/";
+const prob = 0.7;
+let model;
 
 async function readTextToArray(path) {
     return fetch(path).then(response => response.text()).then(text => text.split('\n'));
@@ -26,7 +30,9 @@ async function initResult() {
 
     model = await tf.loadGraphModel(modelURL);
 
-    resultImage.innerHTML = '';
+    resultProb.innerHTML = '';
+    resultLabel.innerHTML = '';
+    resultImage.ineerHTML = '';
 }
 
 async function predict() {
@@ -51,37 +57,27 @@ async function predict() {
         featDiffs = result01;
     }
 
-    let i;
-    let max_img = 3;
-    let img_show = 0;
-    for(i=0; i<500; i++) {
+    let show_idx = result_idx[0];
+
+    for(let i=0; i<result_idx.length; i++) {
         if(dogFilterNames.includes(dogFileNames[result_idx[i]])) {
             continue;
         }
-
-        let resultNode = document.createElement("div");
-        resultNode.style.float = "left";
-
-        let imgNode = document.createElement("img");
-        imgNode.src = "./images/dogs/" + dogFileNames[result_idx[i]];
-        imgNode.width = 224
-        imgNode.alt = dogFileNames[result_idx[i]];
-
-        let dogName = dogFileNames[result_idx[i]].replace(/_[0-9]+.*/, "");
-        let convertedDogName = nameConverter[dogName];
-
-        resultNode.innerHTML = convertedDogName + "<br />";
-        resultNode.innerHTML = resultNode.innerHTML + (featDiffs[result_idx[i]]*100).toFixed(2) + "%<br />";
-        resultNode.style.textAlign = "center";
-        resultNode.appendChild(imgNode);
-
-        resultImage.appendChild(resultNode);
-
-        img_show++;
-        if(img_show >= max_img) {
+        show_idx = result_idx[i];
+        if(Math.random() > prob) {
             break;
         }
     }
+
+    resultImage.src = "./images/dogs/" + dogFileNames[show_idx];
+
+    let dogName = dogFileNames[show_idx].replace(/_[0-9]+.*/, "");
+    let convertedDogName = nameConverter[dogName];
+
+    resultLabel.innerHTML = convertedDogName;
+    resultProb.innerHTML = (featDiffs[show_idx]*100).toFixed(2) + "%";
+    resultProbMsg.innerHTML = "확률로 일치!";
+
 }
 
 function readURL(input) {
