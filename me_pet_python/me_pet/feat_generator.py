@@ -11,6 +11,7 @@ def generate_features(image_root, feature_file, gray=True, base_model=tf.keras.a
 
     model = base_model(input_shape=(224, 224, 3), include_top=False)
     model = tf.keras.models.Model(model.input, tf.keras.layers.GlobalAveragePooling2D()(model.output))
+    model.summary()
 
     def generator():
         for file in file_list:
