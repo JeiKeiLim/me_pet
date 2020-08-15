@@ -1,8 +1,10 @@
 const resultImage = document.getElementById('resultImage');
+const resultHeadMsg = document.getElementById('resultHeadMsg');
 const resultLabel = document.getElementById('resultLabel');
 const resultProb = document.getElementById('resultProb');
 const resultProbMsg = document.getElementById('resultProbMsg');
 const resultContents = document.getElementById('resultContents');
+const loadingMsg = document.getElementById('loadingMsg');
 
 let dogFileNames, dogFilterNames, uniqueDogNames, uniqueDogNamesKorean, dogContents;
 let nameConverter = {};
@@ -33,10 +35,15 @@ async function initResult() {
     const modelURL = URL + "model.json";
 
     model = await tf.loadGraphModel(modelURL);
-
+}
+function initMessages() {
+    loadingMsg.innerHTML = "인공지능이 분석중입니다...<br />잠시만 기다려주세요!";
+    resultHeadMsg.innerHTML = "나와 닮은 강아지는...?";
     resultProb.innerHTML = '';
+    resultProbMsg.innerHTML = '';
     resultLabel.innerHTML = '';
     resultImage.ineerHTML = '';
+    resultContents.innerHTML = '';
 }
 
 async function predict() {
@@ -92,14 +99,19 @@ function readURL(input) {
             $('#imagePreview').fadeIn(650);
         };
         reader.readAsDataURL(input.files[0]);
-
-        initResult().then(() => {
-            predict();
-        });
+        setTimeout(() => {
+                initResult().then(() => {
+                    predict();
+                    loadingMsg.innerHTML = "";
+                });
+            },
+            1000
+        );
     }
 }
 
 $('#imageUpload').change(function () {
+    initMessages();
     readURL(this);
 });
 
