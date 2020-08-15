@@ -4,8 +4,10 @@ import tensorflow as tf
 
 if __name__ == "__main__":
     base_model_dict = {
-        "resnetv2": tf.keras.applications.ResNet50V2
+        "resnetv2": tf.keras.applications.ResNet50V2,
+        "mobilenetv2": tf.keras.applications.MobileNetV2
     }
+
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument("--mode", default="test", type=str, help="feature, filter, tfjs, test")
     parser.add_argument("--gray", default=True, dest="gray", action="store_true")
