@@ -2,9 +2,11 @@ const resultImage = document.getElementById('resultImage');
 const resultLabel = document.getElementById('resultLabel');
 const resultProb = document.getElementById('resultProb');
 const resultProbMsg = document.getElementById('resultProbMsg');
+const resultContents = document.getElementById('resultContents');
 
-let dogFileNames, dogFilterNames, uniqueDogNames, uniqueDogNamesKorean;
+let dogFileNames, dogFilterNames, uniqueDogNames, uniqueDogNamesKorean, dogContents;
 let nameConverter = {};
+let contentsConverter = {};
 let URL = "./tfjs_model/dogs/";
 const prob = 0.7;
 let model;
@@ -18,9 +20,11 @@ async function initParameters() {
     dogFilterNames = await readTextToArray('./tfjs_model/dogs/dog_filters.txt');
     uniqueDogNames = await readTextToArray('./tfjs_model/dogs/dog_labels_unique.txt');
     uniqueDogNamesKorean = await readTextToArray('./tfjs_model/dogs/dog_labels_unique_korean.txt');
+    dogContents = await readTextToArray("./tfjs_model/dogs/dog_labels_contents.txt");
 
     for(let i=0; i<uniqueDogNames.length-1; i++) {
         nameConverter[uniqueDogNames[i]] = uniqueDogNamesKorean[i];
+        contentsConverter[uniqueDogNames[i]] = dogContents[i];
     }
 }
 
@@ -76,7 +80,7 @@ async function predict() {
     resultLabel.innerHTML = nameConverter[dogName];
     resultProb.innerHTML = (featDiffs[show_idx]*100).toFixed(2) + "%";
     resultProbMsg.innerHTML = "확률로 일치!";
-
+    resultContents.innerHTML = contentsConverter[dogName];
 }
 
 function readURL(input) {
