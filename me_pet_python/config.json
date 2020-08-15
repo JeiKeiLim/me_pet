@@ -6,7 +6,7 @@
   "out_filter": "./export/dog_filters.txt",
   "out_label": "./export/dog_labels.txt",
   "out_model": "./export/tf_model",
-  "out_tfjs": "../tfjs/tfjs_model/",
+  "out_tfjs": "../docs/tfjs_model/dogs",
   "filter_n_top": 1000,
   "filter_n_test": 3000,
   "filter_threshold": 0.5,
