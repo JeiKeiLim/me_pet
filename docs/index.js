@@ -1,22 +1,31 @@
 const resultImage = document.getElementById('result');
 
-let dogFileNames, dogFilterNames;
+let dogFileNames, dogFilterNames, uniqueDogNames, uniqueDogNamesKorean;
+let nameConverter = {};
 let URL = "./tfjs_model/dogs/"
 let model
 
-fetch('./tfjs_model/dogs/dog_labels.txt')
-  .then(response => response.text())
-  .then(text => dogFileNames = text.split('\n'))
+async function readTextToArray(path) {
+    return fetch(path).then(response => response.text()).then(text => text.split('\n'));
+}
 
-fetch('./tfjs_model/dogs/dog_filters.txt')
-  .then(response => response.text())
-  .then(text => dogFilterNames = text.split('\n'))
+async function initParameters() {
+    dogFileNames = await readTextToArray('./tfjs_model/dogs/dog_labels.txt');
+    dogFilterNames = await readTextToArray('./tfjs_model/dogs/dog_filters.txt');
+    uniqueDogNames = await readTextToArray('./tfjs_model/dogs/dog_labels_unique.txt');
+    uniqueDogNamesKorean = await readTextToArray('./tfjs_model/dogs/dog_labels_unique_korean.txt');
+
+    for(let i=0; i<uniqueDogNames.length-1; i++) {
+        nameConverter[uniqueDogNames[i]] = uniqueDogNamesKorean[i];
+    }
+}
 
 // Load the image model and setup the webcam
-async function init() {
+async function initResult() {
     const modelURL = URL + "model.json";
 
     model = await tf.loadGraphModel(modelURL);
+
     resultImage.innerHTML = '';
 }
 
@@ -29,8 +38,18 @@ async function predict() {
     imgs = tf.sub(tf.div(tf.cast(imgs, 'float32'), 127.5), 1);
 
     const prediction = await model.execute(imgs);
-    let featDiffs = prediction[1].arraySync()[0];
-    let result_idx = prediction[0].arraySync()[0];
+    let result01 = prediction[1].arraySync()[0];
+    let result02 = prediction[0].arraySync()[0];
+
+    let featDiffs, result_idx;
+    if(result01[0] % 1 == 0) {
+        result_idx = result01;
+        featDiffs = result02;
+    }
+    else {
+        result_idx = result02;
+        featDiffs = result01;
+    }
 
     let i;
     let max_img = 3;
@@ -48,7 +67,10 @@ async function predict() {
         imgNode.width = 224
         imgNode.alt = dogFileNames[result_idx[i]];
 
-        resultNode.innerHTML = dogFileNames[result_idx[i]] + "<br />";
+        let dogName = dogFileNames[result_idx[i]].replace(/_[0-9]+.*/, "");
+        let convertedDogName = nameConverter[dogName];
+
+        resultNode.innerHTML = convertedDogName + "<br />";
         resultNode.innerHTML = resultNode.innerHTML + (featDiffs[result_idx[i]]*100).toFixed(2) + "%<br />";
         resultNode.style.textAlign = "center";
         resultNode.appendChild(imgNode);
@@ -73,7 +95,7 @@ function readURL(input) {
         };
         reader.readAsDataURL(input.files[0]);
 
-        init().then(() => {
+        initResult().then(() => {
             predict();
         });
     }
@@ -83,4 +105,5 @@ $('#imageUpload').change(function () {
     readURL(this);
 });
 
-init();
+initParameters().then(() => {});
+
