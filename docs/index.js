@@ -72,9 +72,8 @@ async function predict() {
     resultImage.src = "./images/dogs/" + dogFileNames[show_idx];
 
     let dogName = dogFileNames[show_idx].replace(/_[0-9]+.*/, "");
-    let convertedDogName = nameConverter[dogName];
 
-    resultLabel.innerHTML = convertedDogName;
+    resultLabel.innerHTML = nameConverter[dogName];
     resultProb.innerHTML = (featDiffs[show_idx]*100).toFixed(2) + "%";
     resultProbMsg.innerHTML = "확률로 일치!";
 
@@ -85,7 +84,6 @@ function readURL(input) {
         var reader = new FileReader();
         reader.onload = function (e) {
             $('#imagePreview').attr('src', e.target.result);
-            // $('#imagePreview').css('background-image', 'url(' + e.target.result + ')');
             $('#imagePreview').hide();
             $('#imagePreview').fadeIn(650);
         };
