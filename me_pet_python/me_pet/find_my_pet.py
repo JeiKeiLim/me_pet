@@ -1,4 +1,4 @@
-from me_pet_python.models import get_base_model
+from models import get_base_model
 import cv2
 import numpy as np
 import tensorflow as tf

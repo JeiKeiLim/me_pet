@@ -1,5 +1,5 @@
 import argparse
-from me_pet_python.me_pet import *
+from me_pet import *
 import tensorflow as tf
 
 if __name__ == "__main__":
