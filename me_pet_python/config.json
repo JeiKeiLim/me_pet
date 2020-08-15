@@ -1,0 +1,14 @@
+{
+  "gray": true,
+  "model": "mobilenetv2",
+  "img_root": "/your/image/root/path",
+  "out_feat": "./export/dog_feats.csv",
+  "out_filter": "./export/dog_filters.txt",
+  "out_label": "./export/dog_labels.txt",
+  "out_model": "./export/tf_model",
+  "out_tfjs": "../tfjs/tfjs_model/",
+  "filter_n_top": 1000,
+  "filter_n_test": 3000,
+  "filter_threshold": 0.5,
+  "mp_size": 4
+}
