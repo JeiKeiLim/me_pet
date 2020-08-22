@@ -2,8 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@2.0.0/dist/tf.min.js"></script>
+<!--     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@2.0.0/dist/tf.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/blazeface"></script>
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-154754490-2"></script>
@@ -25,10 +26,10 @@
 <script async defer crossorigin="anonymous" src="https://connect.facebook.net/ko_KR/sdk.js#xfbml=1&version=v8.0&appId=1009968859461345&autoLogAppEvents=1" nonce="jBA6PV3W"></script>
     <p class="h1 text-center p-5">나와 닮은꼴 강아지 찾기</p>
     <div class="container">
-        <div class="row" id="debugCanvas"></div>
         <div class="row justify-content-center">
             <div class="col-3">
                 <div class="row">
+                    <canvas class="rounded" id="imagePreviewCanvas" width="..." height="..."></canvas>
                     <img class="rounded" id="imagePreview" width="..." height="...">
                 </div>
                 <div class="row mt-1">
@@ -75,7 +76,6 @@
                 &copy; 2020 Jongkuk Lim. All rights reserved.</a></p>
         </div>
     </div>
-    <script src="index.js"></script>
     <script type="text/javascript" async>
       var url_default_ks = "https://story.kakao.com/share?url=";
       var url_default_fb = "https://www.facebook.com/sharer/sharer.php?u=";
@@ -93,6 +93,6 @@
       var url_combine_band = url_default_band + encodeURI(url_this_page)+ '%0A' + encodeURI(title_this_page)+'%0A' + '&route=tistory.com';
       var url_combine_naver = url_default_naver + encodeURI(url_this_page) + title_default_naver + encodeURI(title_this_page);
     </script>
-
+    <script src="index.js"></script>
 </body>
 </html>

@@ -35,8 +35,12 @@ async function initParameters() {
 async function initResult() {
     const modelURL = URL + "model.json";
 
-    model = await tf.loadGraphModel(modelURL);
-    faceModel = await blazeface.load();
+    if(typeof(model) == 'undefined') {
+        model = await tf.loadGraphModel(modelURL);
+    }
+    if(typeof(faceModel) == 'undefined') {
+        faceModel = await blazeface.load();
+    }
 }
 
 function initMessages() {
@@ -47,9 +51,13 @@ function initMessages() {
     resultLabel.innerHTML = '';
     resultImage.innerHTML = '';
     resultContents.innerHTML = '';
+
+    $('#imagePreview').hide();
+    $('#imagePreviewCanvas').fadeOut(500);
+    $('#resultImage').fadeOut(500);
 }
 
-async function getFaceImage() {
+async function getFaceImage(imageSize=[224, 224]) {
     let img, facePreds, bestFace, bestProb;
     let imagePreview = document.getElementById('imagePreview');
 
@@ -66,39 +74,31 @@ async function getFaceImage() {
     }
 
     if(bestProb < 0.98) {
-        return tf.image.resizeBilinear(tf.expandDims(img, 0), [224, 224]);
+        return tf.image.resizeBilinear(tf.expandDims(img, 0), imageSize);
     }
+
+    console.log("bestProb: ", bestProb)
 
     let x1 = facePreds[0].topLeft[0] / img.shape[0];
     let y1 = facePreds[0].topLeft[1] / img.shape[1];
     let x2 = facePreds[0].bottomRight[0] / img.shape[0];
     let y2 = facePreds[0].bottomRight[1] / img.shape[1];
 
-    return tf.image.cropAndResize(tf.expandDims(img, 0), [[y1, x1, y2, x2],], [0,], [224, 224])
+    return tf.image.cropAndResize(tf.expandDims(img, 0), [[y1, x1, y2, x2],], [0,], imageSize)
 }
 
-// let img;
 async function predict() {
-    // await getFaceImage();
-
     // predict can take in an image, video or canvas html element
-    // let imgs = tf.image.resizeBilinear(tf.browser.fromPixels(imagePreview).expandDims(0), [224, 224]);
-    let imgs = await getFaceImage();
+    let modelImage = await getFaceImage([224, 224]);
 
-    // const canvas = document.createElement('canvas');
-    // canvas.width = 224;
-    // canvas.height = 224;
-    // canvas.style = 'margin: 4px;';
-    // img = tf.reshape(imgs, [224, 224, 3]);
-    // img = tf.div(img, 255.0);
-    // await tf.browser.toPixels(img, canvas);
-    // document.getElementById("debugCanvas").appendChild(canvas);
+    let faceImage = tf.reshape(modelImage, [224, 224, 3]);
+    faceImage = tf.div(faceImage, 255.0);
 
-    imgs = imgs.mean(3);
-    imgs = tf.stack([imgs, imgs, imgs], 3);
-    imgs = tf.sub(tf.div(tf.cast(imgs, 'float32'), 127.5), 1);
+    modelImage = modelImage.mean(3);
+    modelImage = tf.stack([modelImage, modelImage, modelImage], 3);
+    modelImage = tf.sub(tf.div(tf.cast(modelImage, 'float32'), 127.5), 1);
 
-    const prediction = await model.execute(imgs);
+    const prediction = await model.execute(modelImage);
     let result01 = prediction[1].arraySync()[0];
     let result02 = prediction[0].arraySync()[0];
 
@@ -119,21 +119,17 @@ async function predict() {
             continue;
         }
         show_idx = result_idx[i];
-        if(Math.random() > prob) {
+        console.log("i: " + i + ", show_idx: " + show_idx )
+        if(Math.random() < prob) {
             break;
         }
     }
 
-    resultImage.src = "./images/dogs/" + dogFileNames[show_idx];
-    $('#resultImage').hide();
-    $('#resultImage').fadeIn(1000);
-
     let dogName = dogFileNames[show_idx].replace(/_[0-9]+.*/, "");
+    let probability = featDiffs[show_idx];
+    resultImage.src = "./images/cropped_dogs/" + dogFileNames[show_idx];
 
-    resultLabel.innerHTML = nameConverter[dogName];
-    resultProb.innerHTML = (featDiffs[show_idx]*100).toFixed(2) + "%";
-    resultProbMsg.innerHTML = "확률로 일치!";
-    resultContents.innerHTML = contentsConverter[dogName];
+    return {faceImage: faceImage, dogName: dogName, probability: probability};
 }
 
 function readURL(input) {
@@ -142,16 +138,38 @@ function readURL(input) {
         reader.onload = function (e) {
             $('#imagePreview').attr('src', e.target.result);
             $('#imagePreview').hide();
-            $('#imagePreview').fadeIn(650);
+            $('#imagePreview').fadeIn(1000);
         };
+
         reader.readAsDataURL(input.files[0]);
         setTimeout(() => {
-                initResult().then(() => {
-                    predict();
-                    loadingMsg.innerHTML = "";
+            initResult().then(() => {
+                predict().then((result) => {
+                    setTimeout(() => {
+                        let canvas = document.getElementById('imagePreviewCanvas');
+                        tf.browser.toPixels(result.faceImage, canvas).then(() => {});
+                        let cavnasPreview = $('#imagePreviewCanvas');
+                        cavnasPreview.css('width', '100%');
+                        cavnasPreview.css('height', '100%');
+
+                        loadingMsg.innerHTML = "";
+
+                        $('#imagePreview').hide();
+                        cavnasPreview.hide();
+                        cavnasPreview.fadeIn(1000);
+
+                        $('#resultImage').hide();
+                        $('#resultImage').fadeIn(1000);
+
+                        resultLabel.innerHTML = nameConverter[result.dogName];
+                        resultProb.innerHTML = (result.probability*100).toFixed(2) + "%";
+                        resultProbMsg.innerHTML = "확률로 일치!";
+                        resultContents.innerHTML = contentsConverter[result.dogName];
+                    }, 1000);
                 });
-            },
-            1000
+            });
+        },
+        1000
         );
     }
 }
@@ -161,5 +179,9 @@ $('#imageUpload').change(function () {
     readURL(this);
 });
 
+$('#imagePreviewCanvas').hide();
 initParameters().then(() => {});
-
+loadingMsg.innerHTML = "로딩 중...<br />잠시만 기다려주세요!";
+initResult().then(() => {
+    loadingMsg.innerHTML = "";
+});

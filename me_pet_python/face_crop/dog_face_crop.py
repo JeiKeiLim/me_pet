@@ -6,7 +6,7 @@ Code adopted from https://github.com/kairess/dog_face_detector
 """
 
 
-def save_cropped_face(file_name, face_detector=None, file_root="", save_root=""):
+def save_cropped_face(file_name, face_detector=None, file_root="", save_root="", margin=0):
     file_path = f"{file_root}/{file_name}"
     image = cv2.imread(file_path)
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
@@ -17,8 +17,8 @@ def save_cropped_face(file_name, face_detector=None, file_root="", save_root="")
         x1, y1 = d.rect.left(), d.rect.top()
         x2, y2 = d.rect.right(), d.rect.bottom()
 
-        x1, y1 = max(x1, 0), max(y1, 0)
-        x2, y2 = min(x2, image.shape[1]), min(y2, image.shape[0])
+        x1, y1 = max(x1-margin, 0), max(y1-margin, 0)
+        x2, y2 = min(x2+margin, image.shape[1]), min(y2+margin, image.shape[0])
 
         if d.confidence > 0.8:
             cropped_face = image[y1:y2, x1:x2, :]
@@ -27,25 +27,13 @@ def save_cropped_face(file_name, face_detector=None, file_root="", save_root="")
             break
 
 
-def crop_dog_faces(root, target_root):
+def crop_dog_faces(root, target_root, margin=0):
     _, _, file_list = next(os.walk(root))
     file_list = [f for f in file_list if f.endswith(".jpg")]
-    detector = dlib.cnn_face_detection_model_v1('dogHeadDetector.dat')
+    detector = dlib.cnn_face_detection_model_v1(f"{os.getcwd()}/face_crop/dogHeadDetector.dat")
 
-    cropper = partial(save_cropped_face, face_detector=detector, file_root=root, save_root=target_root)
+    os.makedirs(target_root, exist_ok=True)
+    cropper = partial(save_cropped_face, face_detector=detector, file_root=root, save_root=target_root, margin=margin)
 
     for file in tqdm(file_list, desc="Cropping faces!"):
         cropper(file)
-
-# if __name__ == "__main__":
-#     root = "/Users/jeikei/Documents/datasets/pets_dataset/images/dogs"
-#     target_root = "/Users/jeikei/Documents/datasets/pets_dataset/cropped_images/dogs"
-#
-#     _, _, file_list = next(os.walk(root))
-#     file_list = [f for f in file_list if f.endswith(".jpg")]
-#     detector = dlib.cnn_face_detection_model_v1('dogHeadDetector.dat')
-#
-#     cropper = partial(save_cropped_face, face_detector=detector, file_root=root, save_root=target_root)
-#     # p_map(cropper, file_list, desc="Cropping faces!")
-#     for file in tqdm(file_list, desc="Cropping faces!"):
-#         cropper(file)
