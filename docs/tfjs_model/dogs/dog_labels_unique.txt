@@ -23,3 +23,4 @@ boxer
 japanese_chin
 great_pyrenees
 beagle
+pori
