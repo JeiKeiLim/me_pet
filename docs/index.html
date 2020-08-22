@@ -2,7 +2,6 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-<!--     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>-->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@2.0.0/dist/tf.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/blazeface"></script>
@@ -57,7 +56,7 @@
         <div class="row justify-content-center text-center" id="loadingMsg">
         </div>
 
-        <div class="row justify-content-center p-5">
+        <div class="row justify-content-center p-5" id="imageUploadButton">
             <input type="file" id="imageUpload" style="display: none;" />
             <input class="btn btn-dark btn-lg" type="button" value="사진 업로드" onclick="document.getElementById('imageUpload').click();" />
         </div>

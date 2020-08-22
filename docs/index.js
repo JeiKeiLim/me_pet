@@ -159,7 +159,7 @@ function readURL(input) {
                         $('#resultImage').fadeIn(1000);
 
                         resultLabel.innerHTML = nameConverter[result.dogName];
-                        resultProb.innerHTML = (result.probability*100).toFixed(2) + "%";
+                        resultProb.innerHTML = (Math.round(result.probability*10000)/100) + "%";
                         resultProbMsg.innerHTML = "확률로 일치!";
                         resultContents.innerHTML = contentsConverter[result.dogName];
                     }, 1000);
@@ -177,8 +177,11 @@ $('#imageUpload').change(function () {
 });
 
 $('#imagePreviewCanvas').hide();
-initParameters().then(() => {});
+$('#imageUploadButton').hide();
 loadingMsg.innerHTML = "로딩 중...<br />잠시만 기다려주세요!";
+
+initParameters().then(() => {});
 initResult().then(() => {
     loadingMsg.innerHTML = "";
+    $('#imageUploadButton').show();
 });
