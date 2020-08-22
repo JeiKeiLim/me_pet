@@ -73,7 +73,7 @@ async function getFaceImage(imageSize=[224, 224]) {
         }
     }
 
-    if(bestProb < 0.98) {
+    if(bestProb < 0.9) {
         return tf.image.resizeBilinear(tf.expandDims(img, 0), imageSize);
     }
 

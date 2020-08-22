@@ -15,6 +15,7 @@ if __name__ == "__main__":
     parser.add_argument("--conf", default="./config.json", type=str, help="Configuration file path")
     parser.add_argument("-co", "--crop-out", default="./export/cropped_img", type=str, help="Output root of crop faces")
     parser.add_argument("-cm", "--crop-margin", default=0, type=int, help="Crop margin size")
+    parser.add_argument("-fr", "--face-root", default="", type=str, help="Root directory of face images")
     args = parser.parse_args()
 
     with open(args.conf, 'r') as f:
@@ -25,8 +26,11 @@ if __name__ == "__main__":
     if args.mode == "feature":
         generate_features(conf['img_root'], conf['out_feat'], gray=conf['gray'], base_model=base_model)
     elif args.mode == "filter":
-        generate_filter_list(conf['out_feat'], conf['out_filter'], n_top=conf['filter_n_top'], n_test=conf['filter_n_test'],
-                             threshold=conf['filter_threshold'], mp_size=conf['mp_size'], base_model=base_model)
+        generate_filter_list_random(conf['out_feat'], conf['out_filter'], n_top=conf['filter_n_top'], n_test=conf['filter_n_test'],
+                                    threshold=conf['filter_threshold'], mp_size=conf['mp_size'], base_model=base_model)
+    elif args.mode == "filter_face":
+        generate_filter_list_faces(args.face_root, conf['out_feat'], conf['out_filter'], n_top=conf['filter_n_top'],
+                                    threshold=conf['filter_threshold'], mp_size=conf['mp_size'], base_model=base_model)
     elif args.mode == "tfjs":
         convert_model_tfjs(conf['out_feat'], conf['out_label'], mp_size=conf['mp_size'], model_root=conf['out_model'],
                            tfjs_model_root=conf['out_tfjs'], base_model=base_model)
