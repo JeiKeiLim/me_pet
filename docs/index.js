@@ -45,6 +45,7 @@ async function initResult() {
 
 function initMessages() {
     loadingMsg.innerHTML = "인공지능이 분석중입니다...<br />잠시만 기다려주세요!";
+    $('#loadingAnim').show();
     resultHeadMsg.innerHTML = "나와 닮은 강아지는...?";
     resultProb.innerHTML = '';
     resultProbMsg.innerHTML = '';
@@ -148,7 +149,7 @@ function readURL(input) {
                         let cavnasPreview = $('#imagePreviewCanvas');
                         cavnasPreview.css('width', '100%');
                         cavnasPreview.css('height', '100%');
-
+                        $('#loadingAnim').hide();
                         loadingMsg.innerHTML = "";
 
                         $('#imagePreview').hide();
@@ -178,10 +179,12 @@ $('#imageUpload').change(function () {
 
 $('#imagePreviewCanvas').hide();
 $('#imageUploadButton').hide();
-loadingMsg.innerHTML = "로딩 중...<br />잠시만 기다려주세요!";
+$('#loadingAnim').show();
+loadingMsg.innerHTML = "로딩 중... 잠시만 기다려주세요!";
 
 initParameters().then(() => {});
 initResult().then(() => {
+    $('#loadingAnim').hide();
     loadingMsg.innerHTML = "";
     $('#imageUploadButton').show();
 });
