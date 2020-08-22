@@ -77,12 +77,10 @@ async function getFaceImage(imageSize=[224, 224]) {
         return tf.image.resizeBilinear(tf.expandDims(img, 0), imageSize);
     }
 
-    console.log("bestProb: ", bestProb)
-
-    let x1 = facePreds[0].topLeft[0] / img.shape[0];
-    let y1 = facePreds[0].topLeft[1] / img.shape[1];
-    let x2 = facePreds[0].bottomRight[0] / img.shape[0];
-    let y2 = facePreds[0].bottomRight[1] / img.shape[1];
+    let x1 = bestFace.topLeft[0] / img.shape[1];
+    let y1 = bestFace.topLeft[1] / img.shape[0];
+    let x2 = bestFace.bottomRight[0] / img.shape[1];
+    let y2 = bestFace.bottomRight[1] / img.shape[0];
 
     return tf.image.cropAndResize(tf.expandDims(img, 0), [[y1, x1, y2, x2],], [0,], imageSize)
 }
@@ -119,7 +117,6 @@ async function predict() {
             continue;
         }
         show_idx = result_idx[i];
-        console.log("i: " + i + ", show_idx: " + show_idx )
         if(Math.random() < prob) {
             break;
         }
